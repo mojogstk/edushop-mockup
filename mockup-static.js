@@ -1,7 +1,7 @@
 /*
  * Interactions for the static GitHub Pages mockup only (not used by the app).
  * Plain browser JavaScript, loaded by every exported page:
- * - the presentation theme dialog (palette, crest, light/dark), matching the
+ * - the presentation theme dialog (palette and crest), matching the
  *   app's ThemeSwitcher and its sessionStorage key;
  * - shop filters and the compare form, sent to the pre-generated page for
  *   that exact selection (same URL scheme as scripts/export-static-mockup.mjs).
@@ -31,8 +31,6 @@
     if (state.preset && state.preset !== DEFAULT_PRESET)
       root.setAttribute("data-preset", state.preset);
     else root.removeAttribute("data-preset");
-    if (state.mode === "light" || state.mode === "dark") root.setAttribute("data-mode", state.mode);
-    else root.removeAttribute("data-mode");
   }
 
   // ---- Theme dialog ----
@@ -43,12 +41,8 @@
     var sync = function () {
       var s = read();
       var preset = s.preset || DEFAULT_PRESET;
-      var mode = s.mode || "system";
       dialog.querySelectorAll('input[name="preset"]').forEach(function (i) {
         i.checked = i.value === preset;
-      });
-      dialog.querySelectorAll('input[name="mode"]').forEach(function (i) {
-        i.checked = i.value === mode;
       });
     };
     opener.addEventListener("click", function () {
@@ -69,17 +63,12 @@
     });
     dialog.addEventListener("change", function (e) {
       var t = e.target;
-      if (!t || (t.name !== "preset" && t.name !== "mode")) return;
-      var s = read();
-      s[t.name] = t.value;
+      if (!t || t.name !== "preset") return;
+      var s = { preset: t.value };
       write(s);
       apply(s);
       var label = t.closest("label");
-      if (status && label) {
-        status.textContent =
-          (t.name === "preset" ? "Theme changed to " : "Appearance set to ") +
-          label.textContent.trim();
-      }
+      if (status && label) status.textContent = "Theme changed to " + label.textContent.trim();
     });
   }
 
