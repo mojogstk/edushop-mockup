@@ -16,19 +16,20 @@
   function read() {
     try {
       return JSON.parse(sessionStorage.getItem(KEY) || "{}") || {};
-    } catch (e) {
+    } catch {
       return {};
     }
   }
   function write(state) {
     try {
       sessionStorage.setItem(KEY, JSON.stringify(state));
-    } catch (e) {
+    } catch {
       /* private mode: the change still applies */
     }
   }
   function apply(state) {
-    if (state.preset && state.preset !== DEFAULT_PRESET) root.setAttribute("data-preset", state.preset);
+    if (state.preset && state.preset !== DEFAULT_PRESET)
+      root.setAttribute("data-preset", state.preset);
     else root.removeAttribute("data-preset");
     if (state.mode === "light" || state.mode === "dark") root.setAttribute("data-mode", state.mode);
     else root.removeAttribute("data-mode");
@@ -76,14 +77,18 @@
       var label = t.closest("label");
       if (status && label) {
         status.textContent =
-          (t.name === "preset" ? "Theme changed to " : "Appearance set to ") + label.textContent.trim();
+          (t.name === "preset" ? "Theme changed to " : "Appearance set to ") +
+          label.textContent.trim();
       }
     });
   }
 
   // ---- Filter forms -> pre-generated pages ----
   function slug(query) {
-    return query.replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
+    return query
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 80);
   }
   function target(appPath, query) {
     return base + appPath + (query ? "/q-" + slug(query) : "") + "/";
